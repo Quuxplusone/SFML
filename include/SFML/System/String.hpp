@@ -39,6 +39,34 @@
 
 namespace sf
 {
+
+////////////////////////////////////////////////////////////
+/// \brief Portable replacement for basic_string<uint8_t>,
+///        which libc++ 18 threatens to stop supporting
+///
+////////////////////////////////////////////////////////////
+struct char_traits_uint8_t : std::char_traits<char> {
+    using char_type = std::uint8_t;
+    static void assign(char_type& c1, char_type c2) { c1 = c2; }
+    static int compare(const char_type* s1, const char_type* s2, size_t n) {
+        return std::memcmp(s1, s2, n);
+    }
+    static size_t length(const char_type *s) {
+        return std::strlen(reinterpret_cast<const char*>(s));
+    }
+    static char_type* move(char_type* s1, const char_type* s2, size_t n) {
+        std::memmove(s1, s2, n);
+        return s1;
+    }
+    static char_type* copy(char_type* s1, const char_type* s2, size_t n) {
+        std::memcpy(s1, s2, n);
+        return s1;
+    }
+};
+
+using U8String = std::basic_string<std::uint8_t, char_traits_uint8_t>;
+
+
 ////////////////////////////////////////////////////////////
 /// \brief Utility string class that automatically handles
 ///        conversions between types and encodings
@@ -269,7 +297,7 @@ public:
     /// \see toUtf16, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<std::uint8_t> toUtf8() const;
+    sf::U8String toUtf8() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-16 string

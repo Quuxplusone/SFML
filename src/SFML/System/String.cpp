@@ -168,10 +168,10 @@ std::wstring String::toWideString() const
 
 
 ////////////////////////////////////////////////////////////
-std::basic_string<std::uint8_t> String::toUtf8() const
+sf::U8String String::toUtf8() const
 {
     // Prepare the output string
-    std::basic_string<std::uint8_t> output;
+    sf::U8String output;
     output.reserve(m_string.length());
 
     // Convert
